@@ -96,8 +96,8 @@ export default function Navbar() {
               whileTap={{ scale: 0.95 }}
               className="flex-shrink-0"
             >
-              <a
-                href="#"
+              <Link
+                href="/"
                 className="flex items-center gap-3 group"
               >
                 <div className="p-2 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 group-hover:shadow-lg group-hover:shadow-cyan-500/50 transition-all duration-300">
