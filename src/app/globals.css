@@ -1,26 +1,157 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@custom-variant dark (&:where(.dark, .dark *));
+
+body {
+  @apply bg-slate-950 text-slate-200;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+button {
+  @apply cursor-pointer;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* DynamicMarquee - Show All Products */
+
+/* Base Splide */
+.splide-marquee {
+  width: 100%;
+  overflow: visible !important;
+  position: relative;
+}
+
+.splide-marquee .splide {
+  position: static;
+}
+
+.splide-marquee .splide__wrapper {
+  overflow: visible !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.splide-marquee .splide__track {
+  overflow: visible !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+.splide-marquee .splide__list {
+  display: flex;
+  gap: 1.5rem;
+  overflow: visible !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Splide Slides */
+.splide-marquee .splide__slide {
+  padding: 0 !important;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: stretch !important;
+  flex-shrink: 0 !important;
+  opacity: 1 !important;
+  overflow: visible !important;
+  height: auto !important;
+  min-width: 0 !important;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Active & Inactive States */
+.splide-marquee .splide__slide--active {
+  transform: scale(1);
+  opacity: 1 !important;
+}
+
+.splide-marquee .splide__slide:not(.splide__slide--active) {
+  opacity: 0.85;
+  transform: scale(0.98);
+}
+
+.splide-marquee .splide__slide:hover:not(.splide__slide--active) {
+  opacity: 0.95;
+  transform: scale(0.99);
+}
+
+/* Hide Default Controls */
+.splide-marquee .splide__arrow,
+.splide-marquee .splide__pagination {
+  display: none !important;
+}
+
+/* Prevent Jitter */
+.splide-marquee .splide__slide,
+.splide-marquee .splide__list {
+  transform: translateZ(0);
+  will-change: auto;
+  backface-visibility: hidden;
+}
+
+.splide-marquee.is-dragging .splide__slide {
+  transition: none;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .splide-marquee .splide__list {
+    gap: 1rem;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@media (max-width: 640px) {
+  .splide-marquee .splide__list {
+    gap: 0.75rem;
+  }
+}
+
+/* Animations */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.splide-marquee .splide__slide {
+  animation: slideIn 0.5s ease-out;
+}
+
+/* Remove Scrollbar */
+.splide-marquee::-webkit-scrollbar {
+  display: none;
+}
+
+.splide-marquee {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Full Visibility of Children */
+.splide-marquee .splide__slide > * {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  display: flex;
+}
+
+/* Performance */
+.splide-marquee .splide__track {
+  contain: layout style paint;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .splide-marquee .splide__slide {
+    animation: none;
+    transition: none;
+  }
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
 }
