@@ -106,7 +106,7 @@ export default function Navbar() {
                 <span className="text-2xl font-black bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
                   El-Shehawy
                 </span>
-              </a>
+              </Link>
             </motion.div>
 
             {/* Desktop Menu */}

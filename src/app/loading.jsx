@@ -10,6 +10,9 @@ export default function loading() {
       >
         <FiLoader className="w-12 h-12 text-cyan-400" />
       </motion.div>
+        <p className="text-cyan-400 font-bold text-sm uppercase tracking-widest animate-pulse">
+          Loading Product...
+        </p>
     </div>
   );
 }

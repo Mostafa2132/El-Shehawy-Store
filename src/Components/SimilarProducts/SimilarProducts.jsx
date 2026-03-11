@@ -1,16 +1,16 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import ProductCard from "@/Components/ProductCard/ProductCard";
+import "@splidejs/react-splide/css";
+import { Splide, SplideSlide } from "@splidejs/react-splide";
 
 export default function SimilarProducts({ productId }) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const sliderRef = useRef(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
+  const [splideInstance, setSplideInstance] = useState(null);
 
   useEffect(() => {
     if (!productId) return;
@@ -23,7 +23,6 @@ export default function SimilarProducts({ productId }) {
         const data = await res.json();
         if (data.success && Array.isArray(data.results)) {
           setProducts(data.results);
-console.log(data.results)
         }
       } catch (err) {
         console.error("Failed to fetch similar products:", err);
@@ -33,20 +32,6 @@ console.log(data.results)
     }
     fetchSimilar();
   }, [productId]);
-
-  const checkScroll = () => {
-    const el = sliderRef.current;
-    if (!el) return;
-    setCanScrollLeft(el.scrollLeft > 0);
-    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
-  };
-
-  const scroll = (dir) => {
-    const el = sliderRef.current;
-    if (!el) return;
-    el.scrollBy({ left: dir === "right" ? 340 : -340, behavior: "smooth" });
-    setTimeout(checkScroll, 400);
-  };
 
   if (!loading && products.length === 0) return null;
 
@@ -77,18 +62,16 @@ console.log(data.results)
           <motion.button
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => scroll("left")}
-            disabled={!canScrollLeft}
-            className="p-2.5 rounded-full bg-slate-800/80 border border-purple-500/20 hover:border-cyan-500/40 text-gray-400 hover:text-cyan-400 transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed"
+            onClick={() => splideInstance?.go("<")}
+            className="p-2.5 rounded-full bg-slate-800/80 border border-purple-500/20 hover:border-cyan-500/40 text-gray-400 hover:text-cyan-400 transition-all duration-300"
           >
             <FiChevronLeft className="w-5 h-5" />
           </motion.button>
           <motion.button
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => scroll("right")}
-            disabled={!canScrollRight}
-            className="p-2.5 rounded-full bg-slate-800/80 border border-purple-500/20 hover:border-cyan-500/40 text-gray-400 hover:text-cyan-400 transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed"
+            onClick={() => splideInstance?.go(">")}
+            className="p-2.5 rounded-full bg-slate-800/80 border border-purple-500/20 hover:border-cyan-500/40 text-gray-400 hover:text-cyan-400 transition-all duration-300"
           >
             <FiChevronRight className="w-5 h-5" />
           </motion.button>
@@ -116,20 +99,36 @@ console.log(data.results)
           ))}
         </div>
       ) : (
-        <div
-          ref={sliderRef}
-          onScroll={checkScroll}
-          className="flex gap-5 overflow-x-auto pb-4"
-          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-        >
-          {products.map((product, index) => (
-            <div key={product.id} className="flex-shrink-0 w-72">
-              <ProductCard
-                product={product}
-                index={index}
-              />
-            </div>
-          ))}
+        <div className="w-full">
+          <Splide
+            onMounted={(splide) => setSplideInstance(splide)}
+            options={{
+              type: "slide",
+              perPage: 4,
+              perMove: 1,
+              gap: "1.25rem",
+              pagination: false,
+              arrows: false,
+              speed: 400,
+              easing: "cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+              drag: true,
+              breakpoints: {
+                1280: { perPage: 4 },
+                1024: { perPage: 3 },
+                768: { perPage: 2 },
+                640: { perPage: 1 },
+              },
+            }}
+            className="w-full"
+          >
+            {products.map((product, index) => (
+              <SplideSlide key={product.id} className="flex">
+                <div className="w-full h-full">
+                  <ProductCard product={product} index={index} />
+                </div>
+              </SplideSlide>
+            ))}
+          </Splide>
         </div>
       )}
     </section>
